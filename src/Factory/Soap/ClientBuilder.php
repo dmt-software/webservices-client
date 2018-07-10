@@ -6,15 +6,14 @@ use DMT\Soap\Serializer\SoapDeserializationVisitor;
 use DMT\Soap\Serializer\SoapHeaderEventSubscriber;
 use DMT\Soap\Serializer\SoapHeaderInterface;
 use DMT\Soap\Serializer\SoapSerializationVisitor;
-use DMT\WebservicesNl\Client\Client;
-use DMT\WebservicesNl\Client\Exception\AuthorizationException;
-use DMT\WebservicesNl\Client\Exception\Client\AuthenticationException;
+use DMT\WebservicesNl\Client\Command\Handler\Locator\CommandHandlerResolver;
 use DMT\WebservicesNl\Client\Factory\AbstractClientBuilder;
 use DMT\WebservicesNl\Client\Soap\Authorization\HeaderAuthenticate;
 use DMT\WebservicesNl\Client\Soap\Authorization\HeaderLogin;
 use GuzzleHttp\Client as HttpClient;
 use JMS\Serializer\EventDispatcher\EventDispatcher;
 use JMS\Serializer\SerializerBuilder;
+use Metadata\Cache\FileCache;
 
 /**
  * Class ClientBuilder
@@ -43,7 +42,7 @@ class ClientBuilder extends AbstractClientBuilder
      *
      * @return ClientBuilder
      */
-    public function setAuthorization(array $credentials): AbstractClientBuilder
+    public function setAuthentication(array $credentials): AbstractClientBuilder
     {
         if (array_key_exists('session_id', $credentials)) {
             $this->authorization = new HeaderAuthenticate($credentials['session_id']);
@@ -55,30 +54,13 @@ class ClientBuilder extends AbstractClientBuilder
     }
 
     /**
-     * Set endpoint for SOAP service.
+     * @todo Add Request middleware to add SOAPAction
      *
-     * @param string $endpoint
-     *
-     * @return ClientBuilder
+     * @return CommandHandlerResolver
      */
-    public function setServiceEndpoint(string $endpoint): AbstractClientBuilder
+    protected function getCommandResolver(): CommandHandlerResolver
     {
-        if (substr($endpoint, -1) !== '/') {
-            $endpoint .= '/';
-        }
-        $this->endpoint = $endpoint;
-
-        return $this;
-    }
-
-    /**
-     * @return Client
-     * @throws \Doctrine\Common\Annotations\AnnotationException
-     */
-    public function build(): Client
-    {
-        /** @todo add Request middleware to add the SOAPAction header */
-        $this->httpClient = new HttpClient(
+        $httpClient = new HttpClient(
             [
                 'base_uri' => $this->endpoint,
                 'http_errors' => false,
@@ -89,7 +71,7 @@ class ClientBuilder extends AbstractClientBuilder
             ]
         );
 
-        $this->serializer = SerializerBuilder::create()
+        $serializer = SerializerBuilder::create()
             ->configureListeners(
                 function (EventDispatcher $dispatcher) {
                     $dispatcher->addSubscriber(new SoapHeaderEventSubscriber($this->authorization));
@@ -97,8 +79,9 @@ class ClientBuilder extends AbstractClientBuilder
             )
             ->setSerializationVisitor('soap', new SoapSerializationVisitor($this->namingStrategy))
             ->setDeserializationVisitor('soap', new SoapDeserializationVisitor($this->namingStrategy))
+            ->setMetadataCache(new FileCache(dirname(__DIR__, 3) . '/cache/soap/'))
             ->build();
 
-        return parent::build();
+        return new CommandHandlerResolver($httpClient, $serializer, 'soap');
     }
 }

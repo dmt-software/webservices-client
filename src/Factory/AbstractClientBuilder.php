@@ -9,11 +9,9 @@ use DMT\WebservicesNl\Client\Command\Handler\MethodNameInflector\ClassNameWithou
 use DMT\WebservicesNl\Client\Command\Middleware\ExceptionMiddleware;
 use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use GuzzleHttp\Client as HttpClient;
 use JMS\Serializer\Naming\CamelCaseNamingStrategy;
 use JMS\Serializer\Naming\PropertyNamingStrategyInterface;
 use JMS\Serializer\Naming\SerializedNameAnnotationStrategy;
-use JMS\Serializer\Serializer;
 use League\Tactician\CommandBus;
 use League\Tactician\Handler\CommandHandlerMiddleware;
 use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
@@ -28,9 +26,9 @@ use League\Tactician\Plugins\LockingMiddleware;
 abstract class AbstractClientBuilder
 {
     /**
-     * @var HttpClient;
+     * @var string
      */
-    protected $httpClient;
+    protected $endpoint;
 
     /**
      * @var PropertyNamingStrategyInterface
@@ -38,19 +36,9 @@ abstract class AbstractClientBuilder
     protected $namingStrategy;
 
     /**
-     * @var Serializer
-     */
-    protected $serializer;
-
-    /**
-     * @var string
-     */
-    protected $serializerFormat;
-
-    /**
      * ClientBuilder constructor.
      */
-    protected function __construct()
+    final public function __construct()
     {
         AnnotationRegistry::registerUniqueLoader('class_exists');
 
@@ -66,26 +54,13 @@ abstract class AbstractClientBuilder
     }
 
     /**
-     * @param array $credentials
-     * @return AbstractClientBuilder
-     */
-    abstract public function setAuthorization(array $credentials): AbstractClientBuilder;
-
-    /**
-     * @param string $endpoint
-     * @return AbstractClientBuilder
-     */
-    abstract public function setServiceEndpoint(string $endpoint): AbstractClientBuilder;
-
-    /**
+     * Build the webservices client.
+     *
      * @return Client
      * @throws AnnotationException
      */
     public function build(): Client
     {
-        $resolver = new CommandHandlerResolver($this->httpClient, $this->serializer, $this->serializerFormat);
-        $locator = new CallableLocator($resolver);
-
         return new Client(
             new CommandBus(
                 [
@@ -94,11 +69,41 @@ abstract class AbstractClientBuilder
                     new ValidationMiddleware(),
                     new CommandHandlerMiddleware(
                         new ClassNameExtractor(),
-                        $locator,
+                        new CallableLocator($this->getCommandResolver()),
                         new ClassNameWithoutSuffixInflector('Request')
                     )
                 ]
             )
         );
     }
+
+    /**
+     * Set endpoint for SOAP service.
+     *
+     * @param string $endpoint
+     *
+     * @return AbstractClientBuilder
+     */
+    public function setServiceEndpoint(string $endpoint): AbstractClientBuilder
+    {
+        $this->endpoint = $endpoint;
+
+        return $this;
+    }
+
+    /**
+     * Set the authentication.
+     *
+     * @param array $credentials
+     *
+     * @return AbstractClientBuilder
+     */
+    abstract public function setAuthentication(array $credentials): AbstractClientBuilder;
+
+    /**
+     * Get a configured command resolver for the requested endpoint.
+     *
+     * @return CommandHandlerResolver
+     */
+    abstract protected function getCommandResolver(): CommandHandlerResolver;
 }

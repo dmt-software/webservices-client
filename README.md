@@ -9,14 +9,13 @@ Currently supports SOAP (document-literal and rpc-encoded)
 <?php
  
 use DMT\WebservicesNl\Client\Client;
-use DMT\WebservicesNl\Client\Factory\Soap\ClientBuilder;
+use DMT\WebservicesNl\Client\Factory\ClientFactory;
 use DMT\WebservicesNl\DutchBusiness\Request\GetDossierV3Request;
-
-$client = ClientBuilder::create()
-    ->setAuthorization(['username' => '__USERNAME__', 'password' => '__PASSWORD__'])
-    ->setServiceEndpoint('https://ws1.webservices.nl/soap_doclit/')
-    ->build();
  
+$credentials = ['username' => '{username}', 'password' => '{password}'];
+$client = ClientFactory::createClient('soap_doclit', $credentials);
+ 
+// create request
 $request = new GetDossierV3Request();
 $request->setDossierNumber('34221165');
  
