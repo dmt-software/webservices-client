@@ -21,16 +21,16 @@ class ClientFactory
     ];
 
     /**
-     * @param string $style
+     * @param string $type
      * @param array $credentials
      *
      * @return Client
      * @throws AnnotationException
      * @throws \InvalidArgumentException
      */
-    public static function createClient(string $style, array $credentials)
+    public static function createClient(string $type, array $credentials)
     {
-        switch ($style) {
+        switch ($type) {
             case 'soap': // fall through
             case 'soap_doclit':
                 $builder = Soap\ClientBuilder::create();
@@ -42,7 +42,7 @@ class ClientFactory
 
         return $builder
             ->setAuthentication($credentials)
-            ->setServiceEndpoint(static::ENDPOINTS[$style])
+            ->setServiceEndpoint(static::ENDPOINTS[$type])
             ->build();
     }
 }
