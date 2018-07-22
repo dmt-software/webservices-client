@@ -78,8 +78,9 @@ class ExceptionHandler
         $currentException = ExceptionInterface::class;
 
         foreach ($codes as $code) {
-            $namespace = preg_replace('~Exception(Interface)?$~', '', $currentException);
-            $childException = $namespace . '\\' . $code . 'Exception';
+            $namespace = preg_replace('~\\\?Exception(Interface)?$~', '', $currentException);
+            $childException = $namespace  . '\\' . $code . 'Exception';
+
             if (!class_exists($childException)) {
                 break;
             }

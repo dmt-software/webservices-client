@@ -12,25 +12,14 @@ use PHPUnit\Framework\TestCase;
 
 class CommandHandlerResolverTest extends TestCase
 {
-    /**
-     * @var CommandHandlerResolver
-     */
-    protected static $resolver;
-
-    public static function setUpBeforeClass()
+    public function testResolveRequest()
     {
-        parent::setUpBeforeClass();
-
-        static::$resolver = new CommandHandlerResolver(
+        $resolver = new CommandHandlerResolver(
             new Client(),
             SerializerBuilder::create()->build(),
             ''
         );
-    }
-
-    public function testResolveRequest()
-    {
-        static::assertInstanceOf(ClientHandler::class, call_user_func(static::$resolver, LoginRequest::class));
+        static::assertInstanceOf(ClientHandler::class, call_user_func($resolver, LoginRequest::class));
     }
 
     /**
@@ -39,10 +28,16 @@ class CommandHandlerResolverTest extends TestCase
      */
     public function testResolveUnknownRequest(string $command)
     {
+        $resolver = new CommandHandlerResolver(
+            new Client(),
+            SerializerBuilder::create()->build(),
+            ''
+        );
+
         $this->expectException(UnknownRequestException::class);
         $this->expectExceptionMessage(sprintf('Could not process %s', $command));
 
-        call_user_func(static::$resolver, $command);
+        call_user_func($resolver, $command);
     }
 
     public function provideIllegalCommand(): array
