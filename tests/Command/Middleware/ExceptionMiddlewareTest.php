@@ -28,8 +28,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\Validator\ConstraintViolation;
-use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ExceptionMiddlewareTest extends TestCase
@@ -138,5 +136,17 @@ class ExceptionMiddlewareTest extends TestCase
             ['Server.Data.NotFound.Nbwo.EstimateUnavailable', NotFoundException::class],
             ['Server.Data.NotFound.Kadaster.NotDeliverable', NotFoundException::class],
         ];
+    }
+
+    public function testUnexpectedException()
+    {
+        static::expectException(ServerException::class);
+        static::expectExceptionMessage('Unknown error occurred');
+
+
+        $middleware = new ExceptionMiddleware();
+        $middleware->execute(new \stdClass(), function () {
+            throw new \RuntimeException('Bad things might happen');
+        });
     }
 }
