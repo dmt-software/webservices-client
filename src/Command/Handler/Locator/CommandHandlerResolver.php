@@ -3,6 +3,8 @@
 namespace DMT\WebservicesNl\Client\Command\Handler\Locator;
 
 use DMT\WebservicesNl\Client\ClientHandler;
+use DMT\WebservicesNl\Client\Exception\Server\UnavailableException;
+use DMT\WebservicesNl\Client\Exception\UnknownRequestException;
 use GuzzleHttp\Client;
 use JMS\Serializer\Serializer;
 
@@ -44,14 +46,17 @@ class CommandHandlerResolver
 
     public function __invoke(string $command): ClientHandler
     {
-        $handlerClass = preg_replace(
-            '~^(DMT\\\WebservicesNl\\\)([^\\\]+)(\\\.*)?(\\\.*)$~',
-            "$1$2\\\\$2Handler",
-            $command
-        );
+        $handlerClass = null;
+        if (strpos($command, 'DMT\\WebservicesNl\\') === 0) {
+            $handlerClass = preg_replace(
+                '~^(DMT\\\WebservicesNl\\\)([^\\\]+)(\\\.*)?(\\\.*)$~',
+                "$1$2\\\\$2Handler",
+                $command
+            );
+        }
 
-        if (!class_exists($handlerClass)) {
-            die($handlerClass);
+        if (!$handlerClass || !class_exists($handlerClass)) {
+            throw new UnknownRequestException('Could not process ' . $command);
         }
 
         return new $handlerClass($this->httpClient, $this->serializer, $this->format);

@@ -49,8 +49,8 @@ class ClassNameWithoutSuffixInflector implements MethodNameInflector
         $commandName = get_class($command);
 
         $start = strpos($commandName, '\\') !== false ? strrpos($commandName, '\\') + 1 : 0;
-        $length = strpos($commandName, $this->suffix, -$this->suffixLength) !== false ? $this->suffixLength : 0;
+        $length = strpos($commandName, $this->suffix, -$this->suffixLength) !== false ? $this->suffixLength : null;
 
-        return lcfirst(substr($commandName, $start, -$length));
+        return lcfirst($length ? substr($commandName, $start, -$length) : substr($commandName, $start));
     }
 }
