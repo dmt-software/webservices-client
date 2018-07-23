@@ -5,20 +5,13 @@ namespace DMT\Test\WebservicesNl\Client\Command\Middleware;
 use DMT\CommandBus\Validator\ValidationException;
 use DMT\Soap\Serializer\SoapFaultException;
 use DMT\WebservicesNl\Client\Command\Middleware\ExceptionMiddleware;
-use DMT\WebservicesNl\Client\Exception\Client\Authentication\HostRestrictionException;
 use DMT\WebservicesNl\Client\Exception\Client\AuthenticationException;
-use DMT\WebservicesNl\Client\Exception\Client\AuthorizationException;
 use DMT\WebservicesNl\Client\Exception\Client\Input\FormatIncorrectException;
-use DMT\WebservicesNl\Client\Exception\Client\Input\IncompleteException;
-use DMT\WebservicesNl\Client\Exception\Client\Input\InvalidException;
 use DMT\WebservicesNl\Client\Exception\Client\InputException;
-use DMT\WebservicesNl\Client\Exception\Client\PaymentException;
 use DMT\WebservicesNl\Client\Exception\ClientException;
+use DMT\WebservicesNl\Client\Exception\ExceptionInterface;
 use DMT\WebservicesNl\Client\Exception\Server\Data\NotFoundException;
-use DMT\WebservicesNl\Client\Exception\Server\Data\PageNotFoundException;
-use DMT\WebservicesNl\Client\Exception\Server\DataException;
 use DMT\WebservicesNl\Client\Exception\Server\Unavailable\InternalErrorException;
-use DMT\WebservicesNl\Client\Exception\Server\Unavailable\TemporaryException;
 use DMT\WebservicesNl\Client\Exception\Server\UnavailableException;
 use DMT\WebservicesNl\Client\Exception\ServerException;
 use GuzzleHttp\Exception\RequestException;
@@ -90,17 +83,17 @@ class ExceptionMiddlewareTest extends TestCase
      * @dataProvider provideFaultCode
      *
      * @param string $faultCode
-     * @param string $expected
      *
      * @throws \ReflectionException
      */
-    public function testExecuteHttpRequestException(string $faultCode, string $expected)
+    public function testExecuteHttpRequestException(string $faultCode)
     {
-        static::expectException($expected);
+        static::expectException(ExceptionInterface::class);
 
         /** @var MockObject|RequestInterface $request */
         $request = static::getMockForAbstractClass(RequestInterface::class);
         $request->expects(static::any())->method('getUri')->willReturn(new Uri());
+
         /** @var MockObject|ResponseInterface $response */
         $response = static::getMockForAbstractClass(ResponseInterface::class);
         $response->expects(static::any())->method('getBody')->willReturn(new Stream(fopen('php://input', 'r')));
@@ -118,23 +111,10 @@ class ExceptionMiddlewareTest extends TestCase
         return [
             ['Client', ClientException::class],
             ['Client.Authentication', AuthenticationException::class],
-            ['Client.Authentication.HostRestriction', HostRestrictionException::class],
-            ['Client.Authorization', AuthorizationException::class],
-            ['Client.Input', InputException::class],
             ['Client.Input.FormatIncorrect', FormatIncorrectException::class],
-            ['Client.Input.Incomplete', IncompleteException::class],
-            ['Client.Input.Invalid', InvalidException::class],
-            ['Client.Payment', PaymentException::class],
             ['Server', ServerException::class],
-            ['Server.Data', DataException::class],
             ['Server.Data.NotFound', NotFoundException::class],
-            ['Server.Data.PageNotFound', PageNotFoundException::class],
             ['Server.Unavailable', UnavailableException::class],
-            ['Server.Unavailable.InternalError', InternalErrorException::class],
-            ['Server.Unavailable.Temporary', TemporaryException::class],
-            // these might have their own exception that derives from NotFoundException
-            ['Server.Data.NotFound.Nbwo.EstimateUnavailable', NotFoundException::class],
-            ['Server.Data.NotFound.Kadaster.NotDeliverable', NotFoundException::class],
         ];
     }
 
@@ -142,7 +122,6 @@ class ExceptionMiddlewareTest extends TestCase
     {
         static::expectException(ServerException::class);
         static::expectExceptionMessage('Unknown error occurred');
-
 
         $middleware = new ExceptionMiddleware();
         $middleware->execute(new \stdClass(), function () {
