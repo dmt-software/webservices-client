@@ -11,5 +11,5 @@ use DMT\WebservicesNl\Client\Exception\ClientException;
  */
 class InputException extends ClientException
 {
-
+    const MESSAGE = 'An error occurred due to a problem with the client\'s input.';
 }

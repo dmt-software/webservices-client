@@ -11,5 +11,6 @@ use DMT\WebservicesNl\Client\Exception\ClientException;
  */
 class PaymentException extends ClientException
 {
-
+    const MESSAGE = 'The request can\'t be processed, because the user (or its account) '
+        . 'doesn\'t have sufficient balance/credits.';
 }

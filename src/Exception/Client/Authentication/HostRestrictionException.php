@@ -11,5 +11,5 @@ use DMT\WebservicesNl\Client\Exception\Client\AuthorizationException;
  */
 class HostRestrictionException extends AuthorizationException
 {
-
+    const MESSAGE = 'Authentication failed due to restrictions on hosts and/or ip addresses.';
 }

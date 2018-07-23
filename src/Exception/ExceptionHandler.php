@@ -62,10 +62,10 @@ class ExceptionHandler
             $exceptionClass = $this->getServiceException($exception->getResponse()->getHeaderLine('X-WS-ErrorCode'));
         }
         if ($exceptionClass !== ExceptionInterface::class) {
-            throw new $exceptionClass($exception->getMessage());
+            throw new $exceptionClass();
         }
 
-        throw new InternalErrorException('Internal Server Error', 0, $exception);
+        throw new ServerException('Unknown error occurred', 0, $exception);
     }
 
     /**

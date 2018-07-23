@@ -11,5 +11,5 @@ use DMT\WebservicesNl\Client\Exception\Server\DataException;
  */
 class PageNotFoundException extends DataException
 {
-
+    const MESSAGE = 'The requested result page doesn\'t exist.';
 }

@@ -11,5 +11,5 @@ use DMT\WebservicesNl\Client\Exception\ServerException;
  */
 class DataException extends ServerException
 {
-
+    const MESSAGE = 'An error occurred while retrieving requested data.';
 }

@@ -11,5 +11,5 @@ use DMT\WebservicesNl\Client\Exception\ClientException;
  */
 class AuthorizationException extends ClientException
 {
-
+    const MESSAGE = 'The client has been authenticated, but isn\'t allowed to use the requested functionality.';
 }

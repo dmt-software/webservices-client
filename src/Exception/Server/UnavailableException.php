@@ -11,5 +11,5 @@ use DMT\WebservicesNl\Client\Exception\ServerException;
  */
 class UnavailableException extends ServerException
 {
-
+    const MESSAGE = 'An error occurred that causes the service to be unavailable.';
 }

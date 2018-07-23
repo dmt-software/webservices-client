@@ -23,7 +23,7 @@ class ClassNameWithoutSuffixInflectorTest extends TestCase
             $inflector = new ClassNameWithoutSuffixInflector($suffix);
         }
 
-        static::assertSame($expected, $inflector->inflect($object , ''));
+        static::assertSame($expected, $inflector->inflect($object, ''));
     }
 
     public function provideCommand(): array

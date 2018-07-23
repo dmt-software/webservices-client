@@ -11,5 +11,5 @@ use DMT\WebservicesNl\Client\Exception\ClientException;
  */
 class AuthenticationException extends ClientException
 {
-
+    const MESSAGE = 'Authentication of the client has failed, the client is not logged in.';
 }
