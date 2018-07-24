@@ -1,4 +1,4 @@
-# WebserviceNL Client
+# WebserviceNl Client
 
 A generic client for consuming the services from CompanyInfo - WebservicesNl.
 

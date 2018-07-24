@@ -86,6 +86,10 @@ abstract class AbstractClientBuilder
      */
     public function setServiceEndpoint(string $endpoint): AbstractClientBuilder
     {
+        if (!filter_var($endpoint, FILTER_VALIDATE_URL) || parse_url($endpoint, PHP_URL_SCHEME) !== 'https') {
+            throw new \InvalidArgumentException('Incorrect endpoint given');
+        }
+
         $this->endpoint = $endpoint;
 
         return $this;
@@ -97,6 +101,7 @@ abstract class AbstractClientBuilder
      * @param array $credentials
      *
      * @return AbstractClientBuilder
+     * @throws \InvalidArgumentException
      */
     abstract public function setAuthentication(array $credentials): AbstractClientBuilder;
 

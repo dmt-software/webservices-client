@@ -25,7 +25,7 @@ class ClientBuilder extends AbstractClientBuilder
     /**
      * @var SoapHeaderInterface
      */
-    protected $authorization;
+    protected $authentication;
 
     /**
      * @var string
@@ -41,13 +41,16 @@ class ClientBuilder extends AbstractClientBuilder
      * @param array $credentials
      *
      * @return ClientBuilder
+     * @throws \InvalidArgumentException
      */
     public function setAuthentication(array $credentials): AbstractClientBuilder
     {
         if (array_key_exists('session_id', $credentials)) {
-            $this->authorization = new HeaderAuthenticate($credentials['session_id']);
+            $this->authentication = new HeaderAuthenticate($credentials['session_id']);
         } elseif (array_key_exists('username', $credentials) && array_key_exists('password', $credentials)) {
-            $this->authorization = new HeaderLogin($credentials['username'], $credentials['password']);
+            $this->authentication = new HeaderLogin($credentials['username'], $credentials['password']);
+        } else {
+            throw new \InvalidArgumentException('No credentials given.');
         }
 
         return $this;
@@ -74,7 +77,7 @@ class ClientBuilder extends AbstractClientBuilder
         $serializer = SerializerBuilder::create()
             ->configureListeners(
                 function (EventDispatcher $dispatcher) {
-                    $dispatcher->addSubscriber(new SoapHeaderEventSubscriber($this->authorization));
+                    $dispatcher->addSubscriber(new SoapHeaderEventSubscriber($this->authentication));
                 }
             )
             ->setSerializationVisitor('soap', new SoapSerializationVisitor($this->namingStrategy))

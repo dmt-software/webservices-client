@@ -37,7 +37,7 @@ class ClientFactory
                 break;
 
             default:
-                throw new \InvalidArgumentException('Unsupported client style');
+                throw new \InvalidArgumentException('Unsupported client type');
         }
 
         return $builder
