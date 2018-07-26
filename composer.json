@@ -28,7 +28,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "DMT\\Test\\WebservicesNl\\Client\\": "src/"
+            "DMT\\Test\\WebservicesNl\\Client\\": "tests/"
         }
     }
 }
