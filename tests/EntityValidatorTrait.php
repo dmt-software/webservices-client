@@ -6,6 +6,7 @@ use DMT\Test\WebservicesNl\Client\Helper\EntityHelper;
 use JMS\Serializer\Annotation\AccessType;
 use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\Constraint\IsEqual;
+use PHPUnit\Framework\Constraint\TraversableContains;
 
 /**
  * Trait EntityValidatorTrait
@@ -14,6 +15,17 @@ use PHPUnit\Framework\Constraint\IsEqual;
  */
 trait EntityValidatorTrait
 {
+    public function testEntityUsesPublicMethods()
+    {
+        static::assertEntityUsesPublicMethods($this->entity);
+    }
+
+    public function testEntityAccessors()
+    {
+        static::assertEntityAccessors($this->entity);
+    }
+
+
     /**
      * @param string $entityName
      *
@@ -73,9 +85,9 @@ trait EntityValidatorTrait
     /**
      * @param object $expected The annotation that is expected to be present.
      * @param array $annotations
-     * @param string|null $message
+     * @param string $message
      */
-    public static function assertContainsAnnotation($expected, array $annotations, string $message = null)
+    public static function assertContainsAnnotation($expected, array $annotations, string $message = '')
     {
         static::assertNotCount(0, $annotations, 'No annotations found');
         static::assertThat($annotations, static::hasAnnotation($expected, $message), $message);
@@ -104,7 +116,7 @@ trait EntityValidatorTrait
     }
 
     /**
-     * @param object $expected
+     * @param object|string $expected
      * @param string $message
      *
      * @return Callback
@@ -114,12 +126,16 @@ trait EntityValidatorTrait
         return new Callback(
             function ($annotations) use ($expected, $message) {
                 $equal = new IsEqual($expected);
-                foreach ($annotations as $annotation) {
+                foreach ($annotations as &$annotation) {
+                    if (is_string($expected)) {
+                        $annotation = get_class($annotation);
+                    }
                     if ($equal->evaluate($annotation, '', true)) {
                         return true;
                     }
                 }
-                $equal->evaluate($annotation ?? '', $message);
+                $contains = new TraversableContains($expected);
+                $contains->evaluate($annotations, $message);
             }
         );
     }

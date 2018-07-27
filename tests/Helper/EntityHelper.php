@@ -50,7 +50,6 @@ class EntityHelper
 
             AnnotationRegistry::registerUniqueLoader('class_exists');
             $this->reader = new AnnotationReader();
-
         } catch (\ReflectionException $exception) {
             throw new \InvalidArgumentException("Entity `$entityName` is not found");
         }

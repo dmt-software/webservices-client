@@ -7,7 +7,6 @@ use JMS\Serializer\Annotation as JMS;
 
 /**
  * @JMS\AccessType("public_method")
- * @JMS\XmlNamespace(uri="http://www.webservices.nl/soap/")
  * @JMS\XmlRoot("HeaderAuthenticate", namespace="http://www.webservices.nl/soap/")
  */
 class HeaderAuthenticate implements SoapHeaderInterface
