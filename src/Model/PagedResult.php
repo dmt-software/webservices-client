@@ -9,7 +9,7 @@ use JMS\Serializer\Annotation as JMS;
  *
  * @JMS\AccessType("public_method")
  */
-abstract class PagedResult
+class PagedResult
 {
     /**
      * @JMS\SerializedName("paging")
