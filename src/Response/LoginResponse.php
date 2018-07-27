@@ -9,7 +9,7 @@ use JMS\Serializer\Annotation as JMS;
  *
  * @JMS\AccessType("public_method")
  */
-class LoginResponse
+class LoginResponse implements ResponseInterface
 {
     /**
      * @JMS\SerializedName("reactid")

@@ -10,7 +10,7 @@ use JMS\Serializer\Annotation as JMS;
  * @JMS\AccessType("public_method")
  * @JMS\XmlRoot("LogoutRequest", namespace="http://www.webservices.nl/soap/")
  */
-class LogoutRequest
+class LogoutRequest implements RequestInterface
 {
 
 }

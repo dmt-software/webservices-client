@@ -58,10 +58,12 @@ class ClientHandler
 
     /**
      * @param LogoutRequest|RequestInterface $request
+     *
+     * @return null
      */
-    public function logout(LogoutRequest $request): void
+    public function logout(LogoutRequest $request)
     {
-        $this->process($request, null);
+        return $this->process($request);
     }
 
     /**
@@ -70,7 +72,7 @@ class ClientHandler
      *
      * @return ResponseInterface
      */
-    public function process(RequestInterface $request, ?string $responseClassName): ?ResponseInterface
+    protected function process(RequestInterface $request, string $responseClassName = null): ?ResponseInterface
     {
         $method = stripos($this->serializerFormat, 'get') === 0 ? 'GET' : 'POST';
         $request = $this->serializer->serialize($request, $this->serializerFormat);
@@ -81,8 +83,11 @@ class ClientHandler
             $response = $this->httpClient->get($request);
         }
 
-        if ($responseClassName) {
-            return $this->serializer->deserialize($response->getBody(), $responseClassName, $this->serializerFormat);
+        if (!$responseClassName) {
+            return null;
+
         }
+
+        return $this->serializer->deserialize($response->getBody(), $responseClassName, $this->serializerFormat);
     }
 }
