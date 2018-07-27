@@ -1,7 +1,7 @@
 {
     "name": "dmt-software/webservices-client",
-    "description": "An implementation of the Company.info Webservices data integration",
-    "keywords": ["WebservicesNL", "CompanyInfo", "Data Integration", "client", "SOAP"],
+    "description": "An implementation of the CompanyInfo WebservicesNl data integration",
+    "keywords": ["WebservicesNl", "CompanyInfo", "Data Integration", "client", "SOAP"],
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -21,6 +21,9 @@
         "psr-4": {
             "DMT\\WebservicesNl\\Client\\": "src/"
         }
+    },
+    "suggest": {
+        "dmt-software/webservices-dutchbusiness": "Enables the DutchBusiness service methods"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.2",
