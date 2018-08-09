@@ -32,19 +32,38 @@ $client = ClientFactory::createClient('soap_doclit', $credentials);
 In this case a client is returned for communication with the `soap_doclit` endpoint. 
 See [Protocols](#protocols) for all supported endpoints.
 
-### Make a request
+### Make a service call using a request
 
+The client uses a CommandBus to delegate a request to a handler that can process it. 
 ```php
 <?php 
  
 use DMT\WebservicesNl\Client\Client;
 use DMT\WebservicesNl\DutchBusiness\Request\GetDossierV3Request;
+use DMT\WebservicesNl\DutchBusiness\Response\GetDossierV3Response;
 
 $request = new GetDossierV3Request();
 $request->setDossierNumber('34221165');
-
+ 
 /** @var Client $client */
+/** @var GetDossierV3Response $response */
 $response = $client->execute($request);
+``` 
+This example sends a `GetDossierV3Request`noticing to the [DutchBusiness](https://webview.webservices.nl/documentation/files/service_dutchbusiness-php.html#Dutch_Business) service 
+and returns a `GetDossierV3Response`.
+
+### Call a service method directly
+
+Alternatively the client accepts a direct service method call with an array of arguments. This functionality is similar 
+as the native \SoapClient.  
+> NOTE: The requests created from your call, might be erroneous without notice. This makes it hard to debug.   
+```php
+<?php
+ 
+use DMT\WebservicesNl\Client\Client;
+ 
+/** @var Client $client */
+$response = $client->dutchBusinessGetDossierV3(['dossier_number' => '34221165']);
 ```
 
 ## Services

@@ -8,10 +8,12 @@ use DMT\Soap\Serializer\SoapHeaderInterface;
 use DMT\Soap\Serializer\SoapSerializationVisitor;
 use DMT\WebservicesNl\Client\Command\Handler\Locator\CommandHandlerResolver;
 use DMT\WebservicesNl\Client\Factory\AbstractClientBuilder;
+use DMT\WebservicesNl\Client\Serializer\Handler\GenericDateHandler;
 use DMT\WebservicesNl\Client\Soap\Authorization\HeaderAuthenticate;
 use DMT\WebservicesNl\Client\Soap\Authorization\HeaderLogin;
 use GuzzleHttp\Client as HttpClient;
 use JMS\Serializer\EventDispatcher\EventDispatcher;
+use JMS\Serializer\Handler\HandlerRegistry;
 use JMS\Serializer\SerializerBuilder;
 use Metadata\Cache\FileCache;
 
@@ -78,6 +80,11 @@ class ClientBuilder extends AbstractClientBuilder
             ->configureListeners(
                 function (EventDispatcher $dispatcher) {
                     $dispatcher->addSubscriber(new SoapHeaderEventSubscriber($this->authentication));
+                }
+            )
+            ->configureHandlers(
+                function(HandlerRegistry $registry) {
+                    $registry->registerSubscribingHandler(new GenericDateHandler());
                 }
             )
             ->setSerializationVisitor('soap', new SoapSerializationVisitor($this->namingStrategy))
