@@ -1,12 +1,11 @@
 <?php
 
-namespace DMT\Test\WebservicesNl\Client\Factory\Soap;
+namespace DMT\Test\WebservicesNl\Client\Factory;
 
 use DMT\Soap\Serializer\SoapHeaderInterface;
-use DMT\Test\WebservicesNl\Client\Factory\AbstractClientBuilderTest;
 use DMT\Test\WebservicesNl\Client\ObjectAssertTrait;
 use DMT\WebservicesNl\Client\Factory\AbstractClientBuilder;
-use DMT\WebservicesNl\Client\Factory\Soap\ClientBuilder;
+use DMT\WebservicesNl\Client\Factory\SoapClientBuilder;
 use DMT\WebservicesNl\Client\Soap\Authorization\HeaderAuthenticate;
 use DMT\WebservicesNl\Client\Soap\Authorization\HeaderLogin;
 
@@ -15,7 +14,7 @@ use DMT\WebservicesNl\Client\Soap\Authorization\HeaderLogin;
  *
  * @package DMT\WebservicesNl\Client
  */
-class ClientBuilderTest extends AbstractClientBuilderTest
+class SoapClientBuilderTest extends AbstractClientBuilderTest
 {
     use ObjectAssertTrait;
 
@@ -27,7 +26,7 @@ class ClientBuilderTest extends AbstractClientBuilderTest
      */
     public function testCredentials(array $credentials, SoapHeaderInterface $header)
     {
-        $builder = ClientBuilder::create()->setAuthentication($credentials);
+        $builder = SoapClientBuilder::create()->setAuthentication($credentials);
 
         static::assertObjectPropertyEquals($header, 'authentication', $builder);
     }
@@ -51,7 +50,7 @@ class ClientBuilderTest extends AbstractClientBuilderTest
      */
     public function testServiceEndpoint($endpoint = 'https://ws.example.com/soap')
     {
-        $builder = ClientBuilder::create()->setServiceEndpoint($endpoint);
+        $builder = SoapClientBuilder::create()->setServiceEndpoint($endpoint);
 
         static::assertObjectPropertyEquals($endpoint, 'endpoint', $builder);
     }
@@ -61,6 +60,6 @@ class ClientBuilderTest extends AbstractClientBuilderTest
      */
     protected function getBuilder(): AbstractClientBuilder
     {
-        return ClientBuilder::create();
+        return SoapClientBuilder::create();
     }
 }

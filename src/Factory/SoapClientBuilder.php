@@ -1,6 +1,6 @@
 <?php
 
-namespace DMT\WebservicesNl\Client\Factory\Soap;
+namespace DMT\WebservicesNl\Client\Factory;
 
 use DMT\Soap\Serializer\SoapDeserializationVisitor;
 use DMT\Soap\Serializer\SoapHeaderEventSubscriber;
@@ -22,7 +22,7 @@ use Metadata\Cache\FileCache;
  *
  * @package DMT\WebservicesNl\Client
  */
-class ClientBuilder extends AbstractClientBuilder
+class SoapClientBuilder extends AbstractClientBuilder
 {
     /**
      * @var SoapHeaderInterface
@@ -42,7 +42,7 @@ class ClientBuilder extends AbstractClientBuilder
     /**
      * @param array $credentials
      *
-     * @return ClientBuilder
+     * @return SoapClientBuilder
      * @throws \InvalidArgumentException
      */
     public function setAuthentication(array $credentials): AbstractClientBuilder
