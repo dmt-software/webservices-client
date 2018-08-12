@@ -89,7 +89,7 @@ class SoapClientBuilder extends AbstractClientBuilder
             )
             ->setSerializationVisitor('soap', new SoapSerializationVisitor($this->namingStrategy))
             ->setDeserializationVisitor('soap', new SoapDeserializationVisitor($this->namingStrategy))
-            ->setMetadataCache(new FileCache(dirname(__DIR__, 3) . '/cache/soap/'))
+            ->setMetadataCache(new FileCache(dirname(__DIR__, 2) . '/cache/soap/'))
             ->build();
 
         return new CommandHandlerResolver($httpClient, $serializer, 'soap');

@@ -33,7 +33,7 @@ class ClientFactory
         switch ($type) {
             case 'soap': // fall through
             case 'soap_doclit':
-                $builder = Soap\SoapClientBuilder::create();
+                $builder = SoapClientBuilder::create();
                 break;
 
             default:
