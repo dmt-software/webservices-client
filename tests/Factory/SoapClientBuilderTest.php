@@ -26,7 +26,7 @@ class SoapClientBuilderTest extends AbstractClientBuilderTest
      */
     public function testCredentials(array $credentials, SoapHeaderInterface $header)
     {
-        $builder = SoapClientBuilder::create()->setAuthentication($credentials);
+        $builder = $this->getBuilder()->setAuthentication($credentials);
 
         static::assertObjectPropertyEquals($header, 'authentication', $builder);
     }
@@ -46,20 +46,10 @@ class SoapClientBuilderTest extends AbstractClientBuilderTest
     }
 
     /**
-     * @param string $endpoint
-     */
-    public function testServiceEndpoint($endpoint = 'https://ws.example.com/soap')
-    {
-        $builder = SoapClientBuilder::create()->setServiceEndpoint($endpoint);
-
-        static::assertObjectPropertyEquals($endpoint, 'endpoint', $builder);
-    }
-
-    /**
-     * @return AbstractClientBuilder
+     * @return SoapClientBuilder
      */
     protected function getBuilder(): AbstractClientBuilder
     {
-        return SoapClientBuilder::create();
+        return SoapClientBuilder::create('soap_doclit');
     }
 }

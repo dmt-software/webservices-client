@@ -36,21 +36,29 @@ abstract class AbstractClientBuilder
     protected $namingStrategy;
 
     /**
-     * ClientBuilder constructor.
+     * @var string
      */
-    final public function __construct()
+    protected $serializerFormat;
+
+    /**
+     * ClientBuilder constructor.
+     * @param string|null $serializerFormat
+     */
+    final public function __construct(string $serializerFormat = null)
     {
         AnnotationRegistry::registerUniqueLoader('class_exists');
 
         $this->namingStrategy = new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy());
+        $this->serializerFormat = $serializerFormat;
     }
 
     /**
+     * @param string|null $serializerFormat
      * @return AbstractClientBuilder
      */
-    public static function create(): self
+    public static function create(string $serializerFormat = null): self
     {
-        return new static();
+        return new static($serializerFormat);
     }
 
     /**

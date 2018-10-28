@@ -12,7 +12,10 @@
     ],
     "require": {
         "php": "^7.1",
+        "ext-curl": "*",
+        "ext-dom": "*",
         "ext-json": "*",
+        "ext-simplexml": "*",
         "dmt-software/jms-soap-serializer": "^1.0",
         "dmt-software/command-bus-validator": "^1.0",
         "guzzlehttp/guzzle": "^6.3",
@@ -20,7 +23,8 @@
     },
     "autoload": {
         "psr-4": {
-            "DMT\\WebservicesNl\\Client\\": "src/"
+            "DMT\\WebservicesNl\\Client\\": "src/",
+            "DMT\\WebservicesNl\\DutchBusiness\\": "srv/"
         }
     },
     "suggest": {
@@ -33,7 +37,7 @@
     "autoload-dev": {
         "psr-4": {
             "DMT\\Test\\WebservicesNl\\Client\\": "tests/",
-            "DMT\\WebservicesNl\\TestMock\\": "tests/"
+            "DMT\\WebservicesNl\\TestMock\\": "tests/TestMock/"
         }
     }
 }

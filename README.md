@@ -55,7 +55,7 @@ and returns a `GetDossierV3Response`.
 ### Call a service method directly
 
 Alternatively the client accepts a direct service method call with an array of arguments. This functionality is similar 
-as the native \SoapClient.  
+to the native SoapClient behaviour.  
 > NOTE: The requests created from your call, might be erroneous without notice. This makes it hard to debug.   
 ```php
 <?php
@@ -69,7 +69,7 @@ $response = $client->dutchBusinessGetDossierV3(['dossier_number' => '34221165'])
 ## Services
 
 Goal is to support as many services as [WebservicesNl](https://webview.webservices.nl/documentation/files/interfaces/more/services-txt.html#Service_names) provides.
-If the service you are looking for isn't available, feel free to leave a [feature request](https://github.com/dmt-software/webservices-client/issues) 
+If the service you are looking for isn't available, feel free to leave a [feature request](https://github.com/dmt-software/webservices-client/issues). 
 
 The services that can be installed are:
 
@@ -81,3 +81,5 @@ Currently this package supports the WebservicesNl endpoint for:
  
 - soap
 - soap_doclit
+- http/rpc
+  - get-simplexml

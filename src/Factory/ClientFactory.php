@@ -18,6 +18,7 @@ class ClientFactory
     const ENDPOINTS = [
         'soap' => 'https://ws1.webservices.nl/soap/',
         'soap_doclit' => 'https://ws1.webservices.nl/soap_doclit/',
+        'get-simplexml' => 'https://ws1.webservices.nl/rpc/get-simplexml/utf-8/',
     ];
 
     /**
@@ -33,7 +34,11 @@ class ClientFactory
         switch ($type) {
             case 'soap': // fall through
             case 'soap_doclit':
-                $builder = SoapClientBuilder::create();
+                $builder = SoapClientBuilder::create('soap');
+                break;
+
+            case 'get-simplexml':
+                $builder = HttpRpcClientBuilder::create($type);
                 break;
 
             default:

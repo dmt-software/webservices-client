@@ -21,7 +21,7 @@ class ClientFactoryTest extends TestCase
      */
     public function testCreateClient(string $type)
     {
-        $client = ClientFactory::createClient($type, ['session_id' => '30C8D6F8CC2ABE90AD979437D3D955A3']);
+        $client = ClientFactory::createClient($type, ['username' => 'user', 'password' => '30C8D6F8CC2ABE90AD9794A3']);
 
         static::assertObjectHasAttribute('commandBus', $client);
     }

@@ -8,6 +8,7 @@ use DMT\WebservicesNl\Client\Request\RequestInterface;
 use DMT\WebservicesNl\Client\Response\LoginResponse;
 use DMT\WebservicesNl\Client\Response\ResponseInterface;
 use GuzzleHttp\Client;
+use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 
 /**
@@ -33,17 +34,28 @@ class ClientHandler
     protected $serializerFormat;
 
     /**
+     * @var string
+     */
+    protected $deserializerFormat;
+
+    /**
      * DutchBusinessHandler constructor.
      *
      * @param Client $httpClient
      * @param Serializer $serializer
-     * @param string $format
+     * @param string $serializerFormat
+     * @param string|null $deserializerFormat
      */
-    public function __construct(Client $httpClient, Serializer $serializer, string $format)
-    {
+    public function __construct(
+        Client $httpClient,
+        Serializer $serializer,
+        string $serializerFormat,
+        string $deserializerFormat = null
+    ) {
         $this->httpClient = $httpClient;
         $this->serializer = $serializer;
-        $this->serializerFormat = $format;
+        $this->serializerFormat = $serializerFormat;
+        $this->deserializerFormat = $deserializerFormat ?? $serializerFormat;
     }
 
     /**
@@ -74,20 +86,23 @@ class ClientHandler
      */
     protected function process(RequestInterface $request, string $responseClassName = null): ?ResponseInterface
     {
-        $method = stripos($this->serializerFormat, 'get') === 0 ? 'GET' : 'POST';
-        $request = $this->serializer->serialize($request, $this->serializerFormat);
+        $context = SerializationContext::create();
+        if ($this->serializerFormat === 'get') {
+            $context->setSerializeNull(true);
+        }
 
-        if ($method === 'POST') {
-            $response = $this->httpClient->post('', ['body' => $request]);
-        } else {
+        $request = $this->serializer->serialize($request, $this->serializerFormat, $context);
+
+        if ($this->serializerFormat === 'get') {
             $response = $this->httpClient->get($request);
+        } else {
+            $response = $this->httpClient->post('', ['body' => $request]);
         }
 
         if (!$responseClassName) {
             return null;
-
         }
 
-        return $this->serializer->deserialize($response->getBody(), $responseClassName, $this->serializerFormat);
+        return $this->serializer->deserialize($response->getBody(), $responseClassName, $this->deserializerFormat);
     }
 }

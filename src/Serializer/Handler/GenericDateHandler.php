@@ -22,6 +22,10 @@ class GenericDateHandler extends DateHandler
     const FORMATS = [
         'xml' => [
             'soap',
+            'xml',
+        ],
+        'rpc' => [
+            'get'
         ]
     ];
 

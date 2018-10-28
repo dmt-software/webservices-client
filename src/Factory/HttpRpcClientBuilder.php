@@ -2,53 +2,51 @@
 
 namespace DMT\WebservicesNl\Client\Factory;
 
-use DMT\Soap\Serializer\SoapDeserializationVisitor;
-use DMT\Soap\Serializer\SoapHeaderEventSubscriber;
-use DMT\Soap\Serializer\SoapHeaderInterface;
-use DMT\Soap\Serializer\SoapSerializationVisitor;
 use DMT\WebservicesNl\Client\Command\Handler\Locator\CommandHandlerResolver;
+use DMT\WebservicesNl\Client\Serializer\EventSubscriber\RequestMethodEventSubscriber;
+use DMT\WebservicesNl\Client\Serializer\EventSubscriber\UserCredentialsEventSubscriber;
 use DMT\WebservicesNl\Client\Serializer\Handler\GenericDateHandler;
-use DMT\WebservicesNl\Client\Soap\Authorization\HeaderAuthenticate;
-use DMT\WebservicesNl\Client\Soap\Authorization\HeaderLogin;
+use DMT\WebservicesNl\Client\Serializer\HttpGetSerializationVisitor;
 use GuzzleHttp\Client as HttpClient;
 use JMS\Serializer\EventDispatcher\EventDispatcher;
 use JMS\Serializer\Handler\HandlerRegistry;
 use JMS\Serializer\SerializerBuilder;
+use JMS\Serializer\XmlDeserializationVisitor;
 use Metadata\Cache\FileCache;
 
 /**
- * Class ClientBuilder
+ * Class HttpRpcClientBuilder
  *
  * @package DMT\WebservicesNl\Client
  */
-class SoapClientBuilder extends AbstractClientBuilder
+class HttpRpcClientBuilder extends AbstractClientBuilder
 {
     /**
-     * @var SoapHeaderInterface
+     * @var UserCredentialsEventSubscriber
      */
     protected $authentication;
 
     /**
+     * Set the authentication.
+     *
      * @param array $credentials
      *
-     * @return SoapClientBuilder
+     * @return AbstractClientBuilder
      * @throws \InvalidArgumentException
      */
     public function setAuthentication(array $credentials): AbstractClientBuilder
     {
-        if (array_key_exists('session_id', $credentials)) {
-            $this->authentication = new HeaderAuthenticate($credentials['session_id']);
-        } elseif (array_key_exists('username', $credentials) && array_key_exists('password', $credentials)) {
-            $this->authentication = new HeaderLogin($credentials['username'], $credentials['password']);
-        } else {
+        if (!array_key_exists('username', $credentials) || !array_key_exists('password', $credentials)) {
             throw new \InvalidArgumentException('No credentials given.');
         }
+
+        $this->authentication = new UserCredentialsEventSubscriber($credentials['username'], $credentials['password']);
 
         return $this;
     }
 
     /**
-     * @todo Add Request middleware to add SOAPAction
+     * Get a configured command resolver for the requested endpoint.
      *
      * @return CommandHandlerResolver
      */
@@ -60,7 +58,6 @@ class SoapClientBuilder extends AbstractClientBuilder
                 'http_errors' => false,
                 'headers' => [
                     'Content-Type' => 'text/xml; charset=utf-8',
-                    //'SOAPAction' => ''
                 ]
             ]
         );
@@ -68,17 +65,18 @@ class SoapClientBuilder extends AbstractClientBuilder
         $serializer = SerializerBuilder::create()
             ->configureListeners(
                 function (EventDispatcher $dispatcher) {
-                    $dispatcher->addSubscriber(new SoapHeaderEventSubscriber($this->authentication));
+                    $dispatcher->addSubscriber($this->authentication);
+                    $dispatcher->addSubscriber(new RequestMethodEventSubscriber());
                 }
             )
             ->configureHandlers(
-                function(HandlerRegistry $registry) {
+                function (HandlerRegistry $registry) {
                     $registry->registerSubscribingHandler(new GenericDateHandler());
                 }
             )
-            ->setSerializationVisitor('soap', new SoapSerializationVisitor($this->namingStrategy))
-            ->setDeserializationVisitor('soap', new SoapDeserializationVisitor($this->namingStrategy))
-            ->setMetadataCache(new FileCache(dirname(__DIR__, 2) . '/cache/soap/'))
+            ->setSerializationVisitor('get', new HttpGetSerializationVisitor($this->namingStrategy))
+            ->setDeserializationVisitor('simplexml', new XmlDeserializationVisitor($this->namingStrategy))
+            ->setMetadataCache(new FileCache(dirname(__DIR__, 2) . '/cache/http/'))
             ->build();
 
         return new CommandHandlerResolver($httpClient, $serializer, $this->serializerFormat);

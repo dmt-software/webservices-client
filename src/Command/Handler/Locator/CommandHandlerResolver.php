@@ -59,6 +59,6 @@ class CommandHandlerResolver
             throw new UnknownRequestException('Could not process ' . $command);
         }
 
-        return new $handlerClass($this->httpClient, $this->serializer, $this->format);
+        return new $handlerClass($this->httpClient, $this->serializer, ...explode('-', $this->format));
     }
 }
