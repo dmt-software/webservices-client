@@ -3,6 +3,7 @@
 namespace DMT\WebservicesNl\Client\Factory;
 
 use DMT\WebservicesNl\Client\Command\Handler\Locator\CommandHandlerResolver;
+use DMT\WebservicesNl\Client\Serializer\EventSubscriber\PagedResultEventSubscriber;
 use DMT\WebservicesNl\Client\Serializer\EventSubscriber\RequestMethodEventSubscriber;
 use DMT\WebservicesNl\Client\Serializer\EventSubscriber\UserCredentialsEventSubscriber;
 use DMT\WebservicesNl\Client\Serializer\Handler\GenericDateHandler;
@@ -67,6 +68,7 @@ class HttpRpcClientBuilder extends AbstractClientBuilder
                 function (EventDispatcher $dispatcher) {
                     $dispatcher->addSubscriber($this->authentication);
                     $dispatcher->addSubscriber(new RequestMethodEventSubscriber());
+                    $dispatcher->addSubscriber(new PagedResultEventSubscriber());
                 }
             )
             ->configureHandlers(
