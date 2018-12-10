@@ -1,4 +1,7 @@
 # WebserviceNl Client
+[![Build Status](https://travis-ci.org/dmt-software/webservices-client.svg?branch=master)](https://travis-ci.org/dmt-software/webservices-client)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/dmt-software/webservices-client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/dmt-software/webservices-client/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/dmt-software/webservices-client/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/dmt-software/webservices-client/?branch=master)
 
 A generic client for consuming the services from [CompanyInfo - WebservicesNl](https://webview.webservices.nl/documentation/files/introduction-txt.html).
 
