@@ -87,17 +87,10 @@ class ClientHandler
     protected function process(RequestInterface $request, string $responseClassName = null): ?ResponseInterface
     {
         $context = SerializationContext::create();
-        if ($this->serializerFormat === 'get') {
-            $context->setSerializeNull(true);
-        }
 
         $request = $this->serializer->serialize($request, $this->serializerFormat, $context);
 
-        if ($this->serializerFormat === 'get') {
-            $response = $this->httpClient->get($request);
-        } else {
-            $response = $this->httpClient->post('', ['body' => $request]);
-        }
+        $response = $this->httpClient->post('', ['body' => $request]);
 
         if (!$responseClassName) {
             return null;

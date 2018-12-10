@@ -81,5 +81,3 @@ Currently this package supports the WebservicesNl endpoint for:
  
 - soap
 - soap_doclit
-- http/rpc
-  - get-simplexml

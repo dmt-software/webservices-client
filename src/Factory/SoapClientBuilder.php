@@ -2,12 +2,12 @@
 
 namespace DMT\WebservicesNl\Client\Factory;
 
+use DMT\Soap\Serializer\SoapDateHandler;
 use DMT\Soap\Serializer\SoapDeserializationVisitor;
 use DMT\Soap\Serializer\SoapHeaderEventSubscriber;
 use DMT\Soap\Serializer\SoapHeaderInterface;
 use DMT\Soap\Serializer\SoapSerializationVisitor;
 use DMT\WebservicesNl\Client\Command\Handler\Locator\CommandHandlerResolver;
-use DMT\WebservicesNl\Client\Serializer\Handler\GenericDateHandler;
 use DMT\WebservicesNl\Client\Soap\Authorization\HeaderAuthenticate;
 use DMT\WebservicesNl\Client\Soap\Authorization\HeaderLogin;
 use GuzzleHttp\Client as HttpClient;
@@ -48,8 +48,6 @@ class SoapClientBuilder extends AbstractClientBuilder
     }
 
     /**
-     * @todo Add Request middleware to add SOAPAction
-     *
      * @return CommandHandlerResolver
      */
     protected function getCommandResolver(): CommandHandlerResolver
@@ -60,7 +58,6 @@ class SoapClientBuilder extends AbstractClientBuilder
                 'http_errors' => false,
                 'headers' => [
                     'Content-Type' => 'text/xml; charset=utf-8',
-                    //'SOAPAction' => ''
                 ]
             ]
         );
@@ -73,7 +70,7 @@ class SoapClientBuilder extends AbstractClientBuilder
             )
             ->configureHandlers(
                 function(HandlerRegistry $registry) {
-                    $registry->registerSubscribingHandler(new GenericDateHandler());
+                    $registry->registerSubscribingHandler(new SoapDateHandler());
                 }
             )
             ->setSerializationVisitor('soap', new SoapSerializationVisitor($this->namingStrategy))

@@ -18,7 +18,6 @@ class ClientFactory
     const ENDPOINTS = [
         'soap' => 'https://ws1.webservices.nl/soap/',
         'soap_doclit' => 'https://ws1.webservices.nl/soap_doclit/',
-        'get-simplexml' => 'https://ws1.webservices.nl/rpc/get-simplexml/utf-8/',
     ];
 
     /**
@@ -27,7 +26,6 @@ class ClientFactory
      *
      * @return Client
      * @throws AnnotationException
-     * @throws \InvalidArgumentException
      */
     public static function createClient(string $type, array $credentials)
     {
@@ -35,10 +33,6 @@ class ClientFactory
             case 'soap': // fall through
             case 'soap_doclit':
                 $builder = SoapClientBuilder::create('soap');
-                break;
-
-            case 'get-simplexml':
-                $builder = HttpRpcClientBuilder::create($type);
                 break;
 
             default:

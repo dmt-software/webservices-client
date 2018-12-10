@@ -23,8 +23,7 @@
     },
     "autoload": {
         "psr-4": {
-            "DMT\\WebservicesNl\\Client\\": "src/",
-            "DMT\\WebservicesNl\\DutchBusiness\\": "srv/"
+            "DMT\\WebservicesNl\\Client\\": "src/"
         }
     },
     "suggest": {

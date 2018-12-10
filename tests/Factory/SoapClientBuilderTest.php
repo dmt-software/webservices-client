@@ -50,6 +50,6 @@ class SoapClientBuilderTest extends AbstractClientBuilderTest
      */
     protected function getBuilder(): AbstractClientBuilder
     {
-        return SoapClientBuilder::create('soap_doclit');
+        return SoapClientBuilder::create('soap');
     }
 }
